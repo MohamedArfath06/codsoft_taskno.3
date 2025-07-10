@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dial‑Style Calculator (Phone Layout)</title>
+  <style>
+    body { display:flex; justify-content:center; align-items:center; height:100vh; margin:0; background:#f3f3f3; font-family:sans-serif; }
+    #dial-calculator {
+      width:320px; padding:20px; background:#fff; border-radius:16px; box-shadow:0 4px 15px rgba(0,0,0,0.1);
+      text-align:center;
+    }
+    #display { width:100%; height:50px; margin-bottom:10px; font-size:1.8rem; text-align:right; padding:0 12px; border:1px solid #ccc; border-radius:8px; }
+    #dial {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap:10px;
+      width:240px;
+      margin:0 auto 10px;
+    }
+    .num {
+      width:60px; height:60px;
+      display:flex; justify-content:center; align-items:center;
+      font-size:1.4rem;
+      border-radius:50%; background:#ddd; cursor:pointer; user-select:none;
+      transition:background 0.1s;
+    }
+    .num:active { background:#ccc; }
+    .controls { display:flex; justify-content:space-around; flex-wrap: wrap; gap:10px; }
+    .op-btn { padding:10px 14px; font-size:1.2rem; border:none; border-radius:6px; background:#47a; color:#fff; cursor:pointer; }
+    .op-btn:active { background:#369; }
+  </style>
+</head>
+<body>
+  <div id="dial-calculator">
+    <div id="display">0</div>
+    <div id="dial">
+      <!-- Standard phone layout -->
+      <div class="num">1</div><div class="num">2</div><div class="num">3</div>
+      <div class="num">4</div><div class="num">5</div><div class="num">6</div>
+      <div class="num">7</div><div class="num">8</div><div class="num">9</div>
+      <div class="num wide">0</div><div class="num">.</div><div class="num">←</div>
+    </div>
+    <div class="controls">
+      <button class="op-btn" data-op="+">+</button>
+      <button class="op-btn" data-op="-">−</button>
+      <button class="op-btn" data-op="*">×</button>
+      <button class="op-btn" data-op="/">÷</button>
+      <button class="op-btn" id="eq">=</button>
+      <button class="op-btn" id="clr">C</button>
+    </div>
+  </div>
+
+  <script>
+    const disp = document.getElementById('display');
+    let expr = '';
+
+    document.querySelectorAll('.num').forEach(n => {
+      n.addEventListener('click', () => {
+        const v = n.textContent;
+        if (v === '←') expr = expr.slice(0, -1);
+        else expr += v;
+        disp.textContent = expr || '0';
+      });
+    });
+
+    document.querySelectorAll('.op-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        const op = b.dataset.op;
+        if (b.id === 'eq') {
+          try {
+            expr = Function('"use strict";return (' + expr + ')')().toString();
+          } catch {
+            expr = 'Error';
+          }
+        } else if (b.id === 'clr') {
+          expr = '';
+        } else {
+          expr += op;
+        }
+        disp.textContent = expr || '0';
+      });
+    });
+  </script>
+</body>
+</html>
